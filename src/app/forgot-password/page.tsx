@@ -24,19 +24,55 @@ export default function ForgotPassword() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const validateEmail = (email: string) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
+    // 1. If email field is empty
+    if (!email.trim()) {
+      setError("Email is required");
+      setIsLoading(false);
+      return;
+    }
+
+    // 2. If email format is invalid
+    if (!validateEmail(email)) {
+      setError("Enter a valid email address");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      // 3. If email does NOT exist (Check public.users table)
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (userError || !userData) {
+        setError("Invalid email address");
+        setIsLoading(false);
+        return;
+      }
+
+      // 4. If email exists, send reset link
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       });
 
-      if (error) {
-        setError(error.message);
-        throw error;
+      if (resetError) {
+        setError(resetError.message);
+        throw resetError;
       }
 
       setIsSuccess(true);
@@ -72,7 +108,7 @@ export default function ForgotPassword() {
                 <div className="space-y-4">
                   <h2 className="text-3xl font-bold">Check your email!</h2>
                   <p className="text-gray-400">
-                    We've sent a password reset link to <span className="text-white font-medium">{email}</span>. Please follow the instructions in the email.
+                    Password reset link has been sent to your email <span className="text-white font-medium">{email}</span>. Please follow the instructions in the email.
                   </p>
                 </div>
                 <Link href="/login" className="block w-full">

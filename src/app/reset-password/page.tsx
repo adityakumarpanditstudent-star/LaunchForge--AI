@@ -57,6 +57,12 @@ export default function ResetPassword() {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.updateUser({
         password: password,
@@ -101,9 +107,9 @@ export default function ResetPassword() {
                   <CheckCircle2 className="w-12 h-12 text-green-500" />
                 </div>
                 <div className="space-y-4">
-                  <h2 className="text-3xl font-bold">Password Reset!</h2>
+                  <h2 className="text-3xl font-bold">Success!</h2>
                   <p className="text-gray-400">
-                    Your password has been successfully updated. Redirecting you to login...
+                    Your password has been updated successfully. Redirecting you to login...
                   </p>
                 </div>
                 <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
