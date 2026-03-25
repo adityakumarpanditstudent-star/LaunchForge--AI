@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/Button";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 const plans = [
   {
@@ -68,10 +68,20 @@ const plans = [
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [baseUrl, setBaseUrl] = useState("");
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     setBaseUrl(window.location.origin);
+    
+    // Get current user email for developer check
+    const checkUser = async () => {
+      const { data: { user } } = await createClient().auth.getUser();
+      if (user) setUserEmail(user.email ?? null);
+    };
+    checkUser();
   }, []);
+
+  const isDev = userEmail === 'adityafuture.ai.tech@gmail.com';
 
   return (
     <div className="flex min-h-screen bg-black text-white">
@@ -84,11 +94,16 @@ export default function Pricing() {
             animate={{ opacity: 1, scale: 1 }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-wider border border-blue-500/20"
           >
-            Pricing Plans
+            {isDev ? "Developer Access Enabled" : "Pricing Plans"}
           </motion.div>
-          <h1 className="text-4xl md:text-5xl font-bold">Simple, Transparent Pricing</h1>
+          <h1 className="text-4xl md:text-5xl font-bold">
+            {isDev ? "Premium Features Unlocked" : "Simple, Transparent Pricing"}
+          </h1>
           <p className="text-gray-400 max-w-xl mx-auto">
-            Choose the plan that fits your needs. Scale your business with AI-powered design.
+            {isDev 
+              ? "As the developer, you have full administrative access to all premium features and tools." 
+              : "Choose the plan that fits your needs. Scale your business with AI-powered design."
+            }
           </p>
 
           <div className="flex items-center justify-center gap-4 mt-12">
@@ -147,32 +162,37 @@ export default function Pricing() {
                 </ul>
 
                 <div className="flex items-center justify-between gap-4 mb-8">
-                  <Link href={`/payment?plan=${plan.name.toLowerCase()}`} className="flex-1">
+                  <Link 
+                    href={isDev ? "/dashboard" : plan.name === "Starter" ? "/dashboard" : `/payment?plan=${plan.name.toLowerCase()}&billing=${billingCycle}`} 
+                    className="flex-1"
+                  >
                     <Button 
                       variant={plan.variant as any} 
                       className="w-full h-12"
                     >
-                      {plan.buttonText}
+                      {isDev ? "Go to Dashboard" : plan.buttonText}
                     </Button>
                   </Link>
-                  <div className="group relative">
-                    <div className="w-12 h-12 glass rounded-xl flex items-center justify-center cursor-help hover:bg-white/10 transition-colors">
-                      <QrIcon className="w-6 h-6 text-gray-400 group-hover:text-blue-400" />
-                    </div>
-                    {/* Hover QR Preview */}
-                    <div className="absolute bottom-full right-0 mb-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
-                      <div className="glass p-4 rounded-2xl border border-white/10 shadow-2xl w-48 text-center">
-                        <div className="bg-white p-2 rounded-xl mb-3">
-                          <img 
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseUrl}/payment?plan=${plan.name.toLowerCase()}`}
-                            alt="Scan to Pay"
-                            className="w-full aspect-square"
-                          />
+                  {!isDev && plan.name !== "Starter" && (
+                    <div className="group relative">
+                      <div className="w-12 h-12 glass rounded-xl flex items-center justify-center cursor-help hover:bg-white/10 transition-colors">
+                        <QrIcon className="w-6 h-6 text-gray-400 group-hover:text-blue-400" />
+                      </div>
+                      {/* Hover QR Preview */}
+                      <div className="absolute bottom-full right-0 mb-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                        <div className="glass p-4 rounded-2xl border border-white/10 shadow-2xl w-48 text-center">
+                          <div className="bg-white p-2 rounded-xl mb-3">
+                            <img 
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseUrl}/payment?plan=${plan.name.toLowerCase()}&billing=${billingCycle}`}
+                              alt="Scan to Pay"
+                              className="w-full aspect-square"
+                            />
+                          </div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Scan to Pay on Mobile</p>
                         </div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Scan to Pay on Mobile</p>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </GlassCard>
             </motion.div>

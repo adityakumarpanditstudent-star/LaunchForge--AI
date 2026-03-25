@@ -20,6 +20,7 @@ interface Payment {
   id: string;
   user_id: string;
   plan_requested: string;
+  billing_cycle: string;
   amount: number;
   utr_number: string;
   screenshot_url: string;
@@ -58,10 +59,18 @@ export default function AdminPayments() {
     fetchPayments();
   }, []);
 
-  const handleApprove = async (paymentId: string, userId: string, plan: string) => {
+  const handleApprove = async (paymentId: string, userId: string, plan: string, billingCycle: string) => {
     setIsProcessing(paymentId);
     try {
-      // 1. Update payment status
+      // 1. Calculate expiry date
+      const expiryDate = new Date();
+      if (billingCycle === 'monthly') {
+        expiryDate.setMonth(expiryDate.getMonth() + 1);
+      } else if (billingCycle === 'yearly') {
+        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+      }
+
+      // 2. Update payment status
       const { error: paymentError } = await supabase
         .from('payments')
         .update({ status: 'success' })
@@ -69,18 +78,19 @@ export default function AdminPayments() {
 
       if (paymentError) throw paymentError;
 
-      // 2. Update user plan
+      // 3. Update user plan and expiry
       const { error: userError } = await supabase
         .from('users')
         .update({ 
           plan: plan,
-          trial_active: false
+          trial_active: false,
+          subscription_end: expiryDate.toISOString()
         })
         .eq('id', userId);
 
       if (userError) throw userError;
 
-      alert("Payment Approved Successfully!");
+      alert(`Payment Approved! ${plan.toUpperCase()} plan active until ${expiryDate.toLocaleDateString()}`);
       fetchPayments();
     } catch (error: any) {
       console.error("Error approving payment:", error.message);
@@ -175,7 +185,7 @@ export default function AdminPayments() {
                               </span>
                             </div>
                             <p className="text-xs text-gray-500">
-                              UTR: <span className="font-mono text-gray-300">{payment.utr_number}</span> • ₹{payment.amount}
+                              UTR: <span className="font-mono text-gray-300">{payment.utr_number}</span> • ₹{payment.amount} ({payment.billing_cycle})
                             </p>
                           </div>
                         </div>
@@ -197,7 +207,7 @@ export default function AdminPayments() {
                                 size="sm" 
                                 className="bg-green-600 hover:bg-green-500"
                                 disabled={isProcessing === payment.id}
-                                onClick={() => handleApprove(payment.id, payment.user_id, payment.plan_requested)}
+                                onClick={() => handleApprove(payment.id, payment.user_id, payment.plan_requested, payment.billing_cycle)}
                               >
                                 {isProcessing === payment.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                                 Approve

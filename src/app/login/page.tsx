@@ -42,20 +42,40 @@ function LoginContent() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
+
+  const validateInputs = () => {
+    if (!formData.email.includes("@")) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateInputs()) return;
+    
     setIsLoading(true);
     setError(null); // Clear previous errors
 
     try {
       if (isLogin) {
-        // 1. Sign In
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        // 1. Sign In first
+        const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
+
         if (signInError) {
           if (signInError.message.toLowerCase().includes("email not confirmed")) {
             setError("Email not confirmed. Please check your inbox for a verification link.");
@@ -64,11 +84,33 @@ function LoginContent() {
           } else {
             setError(signInError.message);
           }
-          throw signInError;
+          setIsLoading(false);
+          return;
         }
+
+        // 2. Now check if they are in the public.users whitelist
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('email')
+          .eq('id', authData.user.id)
+          .single();
+
+        if (userError || !userData) {
+          // Check if this is a "self-healing" case (e.g. dev user)
+          if (formData.email === 'adityafuture.ai.tech@gmail.com') {
+            router.push(redirectUrl);
+            return;
+          }
+          
+          await supabase.auth.signOut();
+          setError("Access denied. Your email is not registered in our database.");
+          setIsLoading(false);
+          return;
+        }
+
         router.push(redirectUrl);
       } else {
-        // 2. Sign Up
+        // 1. Sign Up
         const { data, error: signupError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -86,7 +128,8 @@ function LoginContent() {
           } else {
             setError(signupError.message);
           }
-          throw signupError;
+          setIsLoading(false);
+          return;
         }
 
         // The DB trigger now handles profile creation.
@@ -98,7 +141,7 @@ function LoginContent() {
       }
     } catch (error: any) {
       console.error("Auth error:", error.message);
-      // Error is now set directly in the try block, so no alert needed here.
+      setError(error.message || "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -197,6 +240,28 @@ function LoginContent() {
                         />
                       </div>
                     </div>
+
+                    {!isLogin && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-2"
+                      >
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Confirm Password</label>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                          <input 
+                            required
+                            type="password" 
+                            placeholder="••••••••"
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                            value={formData.confirmPassword}
+                            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
 
                   <Button variant="glow" className="w-full py-4 text-lg" disabled={isLoading}>

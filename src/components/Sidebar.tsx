@@ -14,6 +14,8 @@ import {
 import { cn } from "@/lib/utils";
 
 import { Logo } from './Logo';
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 const menuItems = [
   { icon: Home, label: "Home", href: "/" },
@@ -26,6 +28,14 @@ const menuItems = [
 
 export const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <aside className="w-64 border-r border-white/5 h-screen sticky top-0 bg-black/50 backdrop-blur-xl flex flex-col p-6">
@@ -58,7 +68,10 @@ export const Sidebar = () => {
       </nav>
 
       <div className="pt-6 border-t border-white/5">
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-gray-400 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 w-full text-gray-400 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all"
+        >
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Logout</span>
         </button>

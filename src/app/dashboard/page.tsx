@@ -68,12 +68,47 @@ function DashboardContent() {
         console.log("Profile missing, creating new record for existing Auth user...");
         const { data: newProfile, error: createError } = await supabase
           .from('users')
-          .insert([{ id: user.id, email: user.email }])
+          .insert([{ 
+            id: user.id, 
+            email: user.email,
+            // Developer auto-premium
+            plan: user.email === 'adityafuture.ai.tech@gmail.com' ? 'premium' : 'starter'
+          }])
           .select()
           .single();
         
         if (!createError) {
           profile = newProfile;
+        }
+      }
+
+      // Final check: even if profile exists, if it's the dev, ensure premium
+      if (profile && user.email === 'adityafuture.ai.tech@gmail.com' && profile.plan !== 'premium') {
+        const { data: updatedProfile } = await supabase
+          .from('users')
+          .update({ plan: 'premium' })
+          .eq('id', user.id)
+          .select()
+          .single();
+        if (updatedProfile) profile = updatedProfile;
+      }
+
+      // Check for subscription expiry
+      if (profile && profile.plan !== 'starter' && profile.subscription_end && user.email !== 'adityafuture.ai.tech@gmail.com') {
+        const now = new Date();
+        const expiry = new Date(profile.subscription_end);
+        if (now > expiry) {
+          console.log("Subscription expired, reverting to starter plan...");
+          const { data: revertedProfile } = await supabase
+            .from('users')
+            .update({ 
+              plan: 'starter',
+              subscription_end: null 
+            })
+            .eq('id', user.id)
+            .select()
+            .single();
+          if (revertedProfile) profile = revertedProfile;
         }
       }
       

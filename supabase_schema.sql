@@ -2,9 +2,13 @@
 CREATE TABLE IF NOT EXISTS public.users (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL UNIQUE,
+  full_name TEXT,
+  avatar_url TEXT,
   plan TEXT DEFAULT 'starter' CHECK (plan IN ('starter', 'pro', 'premium')),
   trial_active BOOLEAN DEFAULT TRUE,
   trial_start TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+  subscription_end TIMESTAMP WITH TIME ZONE,
+  preferences JSONB DEFAULT '{"dark_mode": true, "email_alerts": true, "language": "en"}'::jsonb,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
@@ -26,6 +30,7 @@ CREATE TABLE IF NOT EXISTS public.payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   plan_requested TEXT NOT NULL CHECK (plan_requested IN ('pro', 'premium')),
+  billing_cycle TEXT NOT NULL CHECK (billing_cycle IN ('monthly', 'yearly')),
   amount INTEGER NOT NULL,
   utr_number TEXT NOT NULL,
   screenshot_url TEXT,

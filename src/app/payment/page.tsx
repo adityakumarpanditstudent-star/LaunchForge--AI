@@ -24,9 +24,20 @@ function PaymentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planRequested = searchParams.get('plan') || 'pro';
+  const billingCycle = (searchParams.get('billing') as "monthly" | "yearly") || 'monthly';
   
-  // Calculate amount based on plan
-  const amount = planRequested === 'pro' ? 199 : planRequested === 'premium' ? 399 : 0;
+  // Calculate amount based on plan and billing cycle
+  const getAmount = () => {
+    if (planRequested === 'pro') {
+      return billingCycle === 'monthly' ? 199 : 1990;
+    }
+    if (planRequested === 'premium') {
+      return billingCycle === 'monthly' ? 399 : 3990;
+    }
+    return 0;
+  };
+
+  const amount = getAmount();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [upiId] = useState("9304371915@fam");
@@ -62,6 +73,7 @@ function PaymentContent() {
           {
             user_id: user.id,
             plan_requested: planRequested,
+            billing_cycle: billingCycle,
             amount: amount,
             utr_number: formData.utr,
             status: 'processing'

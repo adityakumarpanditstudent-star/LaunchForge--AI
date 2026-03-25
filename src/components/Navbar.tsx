@@ -5,8 +5,27 @@ import { motion } from "framer-motion";
 import { Button } from "./ui/Button";
 
 import { Logo } from './Logo';
+import { createClient } from "@/utils/supabase/client";
+import { useState, useEffect } from "react";
 
 export const Navbar = () => {
+  const [user, setUser] = useState<any>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
+
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
@@ -24,12 +43,20 @@ export const Navbar = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <Link href="/login">
-          <Button variant="outline" size="sm">Log in</Button>
-        </Link>
-        <Link href="/dashboard">
-          <Button variant="glow" size="sm">Start Free Trial</Button>
-        </Link>
+        {user ? (
+          <Link href="/dashboard">
+            <Button variant="glow" size="sm">Go to Dashboard</Button>
+          </Link>
+        ) : (
+          <>
+            <Link href="/login">
+              <Button variant="outline" size="sm">Log in</Button>
+            </Link>
+            <Link href="/login?mode=signup">
+              <Button variant="glow" size="sm">Start Free Trial</Button>
+            </Link>
+          </>
+        )}
       </div>
     </motion.nav>
   );

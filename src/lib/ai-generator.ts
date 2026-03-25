@@ -128,59 +128,87 @@ export const generateLandingPage = async (formData: {
         subheadline: `Stop sleeping on your potential. No cap, this is the only tool you need to revolutionize your ${formData.description}. It's giving main character energy.`,
         cta: "Bet. Let's Go 🚀",
         featuresTitle: "The Vibe Check",
-        benefitsTitle: "Why We're Different",
-        pricingTitle: "Pick Your Player"
-      },
-      luxury: {
-        headline: `The Absolute Pinnacle of ${formData.description}: ${formData.businessName}`,
-        subheadline: `An unparalleled, bespoke experience meticulously crafted for the most discerning ${formData.targetAudience}. Elevate your standards to the extraordinary.`,
-        cta: "Request Exclusive Access",
-        featuresTitle: "The Artisanal Collection",
-        benefitsTitle: "The Distinction of Quality",
-        pricingTitle: "Investment Tiers"
-      },
-      witty: {
-        headline: `Finally, ${formData.description} that doesn't make you want to cry.`,
-        subheadline: `We built ${formData.businessName} because we were tired of the "industry leaders" who clearly forgot how humans work. Your sanity will thank you.`,
-        cta: "Do the Thing (Safely)",
-        featuresTitle: "Cool Stuff We Actually Do",
-        benefitsTitle: "Your Life, But Better",
-        pricingTitle: "The 'Not-A-Scam' Pricing"
-      },
-      bold: {
-        headline: `DOMINATE ${formData.description.toUpperCase()} WITH UNRIVALED POWER.`,
-        subheadline: `${formData.businessName} is engineered for the high-performers who refuse to settle for mediocrity. Stop waiting. Start leading.`,
-        cta: "SEIZE CONTROL NOW",
-        featuresTitle: "The Arsenal",
-        benefitsTitle: "Strategic Advantage",
-        pricingTitle: "Choose Your Power"
-      },
-      minimalist: {
-        headline: `${formData.businessName}. Perfectly Refined.`,
-        subheadline: `The essential tools for ${formData.description}, simplified. No clutter. Just pure performance for ${formData.targetAudience}.`,
-        cta: "Begin the Journey",
-        featuresTitle: "Core Essentials",
-        benefitsTitle: "Pure Value",
-        pricingTitle: "Simple Plans"
-      },
+      benefitsTitle: "Why We're Different",
+      pricingTitle: "Pick Your Player",
+      pricingPlans: [
+        { title: 'The Main Character', price: '$0', features: ['All Basic Vibes', 'No Cap Support', 'Community Hype'] },
+        { title: 'The Final Boss', price: '$49', features: ['Unlimited Aura', 'Priority Vibe Check', 'Exclusive Skins'] }
+      ]
+    },
+    luxury: {
+      headline: `The Absolute Pinnacle of ${formData.description}: ${formData.businessName}`,
+      subheadline: `An unparalleled, bespoke experience meticulously crafted for the most discerning ${formData.targetAudience}. Elevate your standards to the extraordinary.`,
+      cta: "Request Exclusive Access",
+      featuresTitle: "The Artisanal Collection",
+      benefitsTitle: "The Distinction of Quality",
+      pricingTitle: "Investment Tiers",
+      pricingPlans: [
+        { title: 'The Elite Selection', price: '$4,999', features: ['Bespoke Concierge', 'Private Cloud', 'Global Redundancy', 'Dedicated Architect'] },
+        { title: 'The Royal Estate', price: 'Custom', features: ['Unlimited White-Glove Service', 'On-Premise Deployment', 'Full Source Code Access'] }
+      ]
+    },
+    witty: {
+      headline: `Finally, ${formData.description} that doesn't make you want to cry.`,
+      subheadline: `We built ${formData.businessName} because we were tired of the "industry leaders" who clearly forgot how humans work. Your sanity will thank you.`,
+      cta: "Do the Thing (Safely)",
+      featuresTitle: "Cool Stuff We Actually Do",
+      benefitsTitle: "Your Life, But Better",
+      pricingTitle: "The 'Not-A-Scam' Pricing",
+      pricingPlans: [
+        { title: 'The "Just Testing" Plan', price: '$9', features: ['Enough to be dangerous', 'Support that actually replies', 'No hidden fees (we promise)'] },
+        { title: 'The "Adulting" Plan', price: '$99', features: ['All the bells & whistles', 'Priority in our hearts', 'A virtual high-five'] }
+      ]
+    },
+    bold: {
+      headline: `DOMINATE ${formData.description.toUpperCase()} WITH UNRIVALED POWER.`,
+      subheadline: `${formData.businessName} is engineered for the high-performers who refuse to settle for mediocrity. Stop waiting. Start leading.`,
+      cta: "SEIZE CONTROL NOW",
+      featuresTitle: "The Arsenal",
+      benefitsTitle: "Strategic Advantage",
+      pricingTitle: "Choose Your Power",
+      pricingPlans: [
+        { title: 'The Warrior', price: '$49', features: ['Standard Firepower', '24/7 Intel', 'Battle-tested Security'] },
+        { title: 'The Conqueror', price: '$199', features: ['Unlimited Domination', 'Elite Strategy Support', 'Global Command Center'] }
+      ]
+    },
+    minimalist: {
+      headline: `${formData.businessName}. Perfectly Refined.`,
+      subheadline: `The essential tools for ${formData.description}, simplified. No clutter. Just pure performance for ${formData.targetAudience}.`,
+      cta: "Begin the Journey",
+      featuresTitle: "Core Essentials",
+      benefitsTitle: "Pure Value",
+      pricingTitle: "Simple Plans",
+      pricingPlans: [
+        { title: 'Essential', price: '$19', features: ['The Basics', 'Clean Interface', 'Email Support'] },
+        { title: 'Complete', price: '$49', features: ['The Full Experience', 'No Limits', 'Direct Access'] }
+      ]
+    },
       technical: {
         headline: `${formData.businessName}: The Advanced Infrastructure for ${formData.description}`,
         subheadline: `A high-performance, low-latency framework designed specifically for ${formData.targetAudience}. Scale your operations with sub-millisecond precision.`,
         cta: "Deploy Now",
         featuresTitle: "Technical Specifications",
         benefitsTitle: "Operational Efficiency",
-        pricingTitle: "Resource Allocation"
-      }
-    };
+        pricingTitle: "Resource Allocation",
+    pricingPlans: [
+      { title: 'Node', price: '$19', features: ['100k API Requests', '1GB Storage', 'L1 Support', '1 Node instance'] },
+      { title: 'Cluster', price: '$149', features: ['Unlimited Requests', '100GB Storage', 'L3 Priority Support', 'Dedicated Clusters', 'Custom API access'] }
+    ]
+  }
+};
 
-    const defaultContent = {
-      headline: `Elevate Your ${formData.description} with ${formData.businessName}`,
-      subheadline: `The most advanced, comprehensive solution for ${formData.targetAudience} looking to master ${formData.description} with unprecedented ease.`,
-      cta: "Start Your Free Trial",
-      featuresTitle: "Premium Features",
-      benefitsTitle: "Unmatched Benefits",
-      pricingTitle: "Flexible Pricing"
-    };
+const defaultContent = {
+  headline: `Elevate Your ${formData.description} with ${formData.businessName}`,
+  subheadline: `The most advanced, comprehensive solution for ${formData.targetAudience} looking to master ${formData.description} with unprecedented ease.`,
+  cta: "Start Your Free Trial",
+  featuresTitle: "Premium Features",
+  benefitsTitle: "Unmatched Benefits",
+  pricingTitle: "Flexible Pricing",
+  pricingPlans: [
+    { title: 'Starter', price: '$29', features: ['Basic Features', 'Community Support', '1 Project'] },
+    { title: 'Professional', price: '$99', features: ['All Features', 'Priority Support', 'Unlimited Projects', 'Custom Branding'] }
+  ]
+};
 
     return tones[tone] || defaultContent;
   };
@@ -289,10 +317,7 @@ export const generateLandingPage = async (formData: {
         type: 'pricing',
         content: {
           title: contentSet.pricingTitle,
-          items: [
-            { title: 'Growth', price: '$29', features: ['10 Generations/mo', 'Standard Analytics', 'Email Support', '1 Team Member'] },
-            { title: 'Scale', price: '$99', features: ['Unlimited Generations', 'Advanced Insights', '24/7 Priority Support', '5 Team Members', 'Custom Branding'] }
-          ]
+          items: contentSet.pricingPlans
         },
         design: {
           layout: 'centered',
