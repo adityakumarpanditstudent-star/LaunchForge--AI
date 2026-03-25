@@ -56,3 +56,18 @@ ALTER TABLE public.templates ENABLE ROW LEVEL SECURITY;
 -- Template Policies
 CREATE POLICY "Templates are viewable by everyone" ON public.templates
   FOR SELECT USING (true);
+
+-- Function to handle new user profiles
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.users (id, email)
+  VALUES (new.id, new.email);
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to create profile on signup
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

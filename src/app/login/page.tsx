@@ -49,10 +49,12 @@ function LoginContent() {
           password: formData.password,
         });
         if (signInError) {
-          if (signInError.message.includes("Email not confirmed")) {
-            setError("Please confirm your email address to sign in.");
+          if (signInError.message.toLowerCase().includes("email not confirmed")) {
+            setError("Email not confirmed. Please check your inbox for a verification link.");
+          } else if (signInError.message.toLowerCase().includes("invalid login credentials")) {
+            setError("Incorrect email or password. Please try again.");
           } else {
-            setError("Invalid login credentials. Please try again.");
+            setError(signInError.message);
           }
           throw signInError;
         }
@@ -65,7 +67,10 @@ function LoginContent() {
         });
         
         if (signupError) {
-          if (signupError.message.includes("Email rate limit exceeded")) {
+          if (signupError.message.toLowerCase().includes("user already registered")) {
+            setError("Account already exists. Please sign in instead.");
+            setIsLogin(true); // Switch to login automatically
+          } else if (signupError.message.includes("Email rate limit exceeded")) {
             setError("Rate limit exceeded. Please try again in an hour.");
           } else {
             setError(signupError.message);
