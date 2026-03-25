@@ -54,16 +54,32 @@ function SettingsContent() {
     const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push('/login');
+        const currentPath = window.location.pathname + window.location.search;
+        router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
         return;
       }
       setUser(user);
 
-      let { data: profile } = await supabase
+      let { data: profile, error: profileError } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
         .single();
+      
+      if (profileError || !profile) {
+        console.log("Profile missing, creating new record for existing Auth user...");
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert([{ 
+            id: user.id, 
+            email: user.email,
+            plan: user.email === 'adityafuture.ai.tech@gmail.com' ? 'premium' : 'starter'
+          }])
+          .select()
+          .single();
+        
+        if (!createError) profile = newProfile;
+      }
       
       if (profile) {
         // Developer auto-premium check

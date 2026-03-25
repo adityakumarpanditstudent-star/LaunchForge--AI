@@ -31,20 +31,38 @@ export default function Profile() {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; label: string } | null>(null);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
+
     const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push('/login');
+        const currentPath = window.location.pathname + window.location.search;
+        router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
         return;
       }
       setUser(user);
 
-      // Fetch profile
-      let { data: profile } = await supabase
+      // Fetch profile with self-healing
+      let { data: profile, error: profileError } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
         .single();
+      
+      if (profileError || !profile) {
+        console.log("Profile missing, creating new record for existing Auth user...");
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert([{ 
+            id: user.id, 
+            email: user.email,
+            plan: user.email === 'adityafuture.ai.tech@gmail.com' ? 'premium' : 'starter'
+          }])
+          .select()
+          .single();
+        
+        if (!createError) profile = newProfile;
+      }
       
       if (profile) {
         // Developer auto-premium check
@@ -109,8 +127,7 @@ export default function Profile() {
           };
 
           updateTimer();
-          const interval = setInterval(updateTimer, 60000);
-          return () => clearInterval(interval);
+          interval = setInterval(updateTimer, 60000);
         }
       }
 
@@ -126,6 +143,9 @@ export default function Profile() {
     };
 
     fetchUserData();
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [router]);
 
   const handleLogout = async () => {

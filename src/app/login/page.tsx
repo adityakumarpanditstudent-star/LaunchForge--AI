@@ -39,6 +39,7 @@ function LoginContent() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         router.push(redirectUrl);
+        router.refresh();
       }
     };
     checkUser();

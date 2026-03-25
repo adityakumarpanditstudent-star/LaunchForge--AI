@@ -79,7 +79,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/reset-password');
 
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    const redirectUrl = request.nextUrl.searchParams.get('redirect') || '/dashboard';
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 
   return response;
