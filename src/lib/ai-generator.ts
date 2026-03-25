@@ -64,7 +64,7 @@ export interface LandingPageBlueprint {
 
 export const generateLandingPage = async (formData: {
   businessName: string;
-  description?: string;
+  description: string;
   targetAudience: string;
   tone: string;
   goal: string;

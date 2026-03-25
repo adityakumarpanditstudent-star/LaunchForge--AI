@@ -21,13 +21,14 @@ import {
   Smartphone
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { generateLandingPage, LandingPageBlueprint } from "@/lib/ai-generator";
 import { LandingPagePreview } from "@/components/LandingPagePreview";
 import { generateReactCode } from "@/lib/code-generator";
 
 function DashboardContent() {
+  const supabase = createClient();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<any>(null);
