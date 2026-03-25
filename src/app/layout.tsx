@@ -16,9 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} antialiased bg-black text-white`}>
-        <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-black to-black" />
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${inter.className} antialiased bg-black text-white transition-colors duration-300`}>
+        <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/5 via-black to-black" />
         {children}
       </body>
     </html>

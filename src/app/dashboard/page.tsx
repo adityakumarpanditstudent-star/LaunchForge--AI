@@ -158,7 +158,7 @@ function DashboardContent() {
             setFormData(initialFormData);
             
             // Auto-generate preview based on template data
-            const initialBlueprint = await generateLandingPage(initialFormData);
+            const initialBlueprint = await generateLandingPage(initialFormData, profile?.plan || 'starter');
             setBlueprint(initialBlueprint);
             localStorage.setItem("current_blueprint", JSON.stringify(initialBlueprint));
             setShowPreview(true);
@@ -174,7 +174,7 @@ function DashboardContent() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      const result = await generateLandingPage(formData);
+      const result = await generateLandingPage(formData, profile?.plan || 'starter');
       // Artificial delay for better UX
       await new Promise(resolve => setTimeout(resolve, 3000));
       setBlueprint(result);
@@ -202,21 +202,21 @@ function DashboardContent() {
   };
 
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen bg-black text-white transition-colors duration-300">
       <Sidebar />
       
       <main className="flex-1 p-8 overflow-y-auto">
         <header className="flex items-center justify-between mb-10">
           <div>
             <h1 className="text-3xl font-bold mb-2">Generate Landing Page</h1>
-            <p className="text-gray-400">Fill in the details below to create your high-converting landing page.</p>
+            <p className="text-gray-500 dark:text-gray-400">Fill in the details below to create your high-converting landing page.</p>
           </div>
           <div className="flex gap-4">
             {showPreview && blueprint && (
               <Button 
                 variant="outline" 
                 size="sm"
-                className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                className="border-blue-500/50 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10"
                 onClick={() => window.open('/preview', '_blank')}
               >
                 <ExternalLink className="w-4 h-4" /> Full Preview

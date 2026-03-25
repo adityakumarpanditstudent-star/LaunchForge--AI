@@ -38,7 +38,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 border-r border-white/5 h-screen sticky top-0 bg-black/50 backdrop-blur-xl flex flex-col p-6">
+    <aside className="w-64 border-r border-white/5 h-screen sticky top-0 bg-black backdrop-blur-xl flex flex-col p-6 transition-colors duration-300">
       <Link href="/" className="flex items-center gap-2 mb-10">
         <Logo />
       </Link>

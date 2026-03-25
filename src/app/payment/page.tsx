@@ -129,7 +129,7 @@ function PaymentContent() {
               
               <a 
                 href={upiLink}
-                className="relative w-56 h-56 bg-white p-4 rounded-3xl mb-8 overflow-hidden shadow-2xl flex items-center justify-center group cursor-pointer"
+                className="relative w-56 h-56 bg-zinc-900 p-4 rounded-3xl mb-8 overflow-hidden shadow-2xl flex items-center justify-center group cursor-pointer"
               >
                 {/* Dynamic QR Code Generator */}
                 <img 

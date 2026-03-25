@@ -19,8 +19,6 @@ import {
   Clock,
   History,
   AlertTriangle,
-  Moon,
-  Sun,
   Bell,
   Globe
 } from "lucide-react";
@@ -39,6 +37,7 @@ function SettingsContent() {
   const [profile, setProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // Form States
@@ -47,7 +46,6 @@ function SettingsContent() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [preferences, setPreferences] = useState({
-    dark_mode: true,
     email_alerts: true,
     language: "en"
   });
@@ -91,6 +89,58 @@ function SettingsContent() {
 
     fetchUserData();
   }, [router]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please upload an image file.' });
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image size must be less than 2MB.' });
+      return;
+    }
+
+    setIsUploading(true);
+    setMessage(null);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      // Upload image to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update local state and profile
+      setAvatarUrl(publicUrl);
+      
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+      
+      setMessage({ type: 'success', text: 'Profile picture updated!' });
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,10 +237,10 @@ function SettingsContent() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <header>
-        <h1 className="text-3xl font-bold mb-2">Account Settings</h1>
-        <p className="text-gray-400 text-sm">Manage your profile, billing, and security preferences.</p>
+    <div className="max-w-4xl mx-auto space-y-8">
+      <header className="mb-10">
+        <h1 className="text-3xl font-bold tracking-tight mb-2">Settings</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">Manage your profile, billing, and security preferences.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -247,12 +297,16 @@ function SettingsContent() {
                             user?.email?.charAt(0)
                           )}
                         </div>
-                        <button 
-                          type="button"
-                          className="absolute bottom-0 right-0 p-2 bg-blue-500 rounded-lg text-white shadow-lg hover:bg-blue-600 transition-colors group-hover:scale-110"
-                        >
-                          <Camera className="w-4 h-4" />
-                        </button>
+                        <label className="absolute bottom-0 right-0 p-2 bg-blue-500 rounded-lg text-white shadow-lg hover:bg-blue-600 transition-colors group-hover:scale-110 cursor-pointer">
+                          {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                            disabled={isUploading}
+                          />
+                        </label>
                       </div>
                       <div className="space-y-1">
                         <h3 className="text-xl font-bold">Profile Picture</h3>
@@ -351,11 +405,9 @@ function SettingsContent() {
                             {user?.email === 'adityafuture.ai.tech@gmail.com' ? 'Unlimited lifetime access to all premium features.' : 'Experience the full power of LaunchForge AI.'}
                           </p>
                         </div>
-                        {user?.email !== 'adityafuture.ai.tech@gmail.com' && (
-                          <Link href="/pricing">
-                            <Button variant="glow" size="sm">Upgrade Plan</Button>
-                          </Link>
-                        )}
+                        <Link href="/pricing">
+                          <Button variant="glow" size="sm">Upgrade Plan</Button>
+                        </Link>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -402,24 +454,6 @@ function SettingsContent() {
                     </div>
 
                     <div className="space-y-6">
-                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                            <Moon className="w-5 h-5 text-blue-400" />
-                          </div>
-                          <div>
-                            <p className="font-bold">Dark Mode</p>
-                            <p className="text-xs text-gray-500">Enable dark theme for the application</p>
-                          </div>
-                        </div>
-                        <button 
-                          onClick={() => handleUpdatePreferences({ dark_mode: !preferences.dark_mode })}
-                          className={`w-12 h-6 rounded-full transition-colors relative ${preferences.dark_mode ? 'bg-blue-500' : 'bg-white/10'}`}
-                        >
-                          <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${preferences.dark_mode ? 'left-7' : 'left-1'}`} />
-                        </button>
-                      </div>
-
                       <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center">
@@ -506,7 +540,7 @@ function SettingsContent() {
 
 export default function Settings() {
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen bg-black text-white transition-colors duration-300">
       <Sidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <Suspense fallback={

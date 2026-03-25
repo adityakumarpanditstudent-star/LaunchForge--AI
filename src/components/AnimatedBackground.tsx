@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export const AnimatedBackground = () => {
   return (
-    <div className="fixed inset-0 -z-20 overflow-hidden pointer-events-none">
+    <div className="fixed inset-0 -z-20 overflow-hidden pointer-events-none bg-white dark:bg-black transition-colors duration-500">
       <motion.div
         animate={{
           scale: [1, 1.2, 1],
@@ -17,7 +17,7 @@ export const AnimatedBackground = () => {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full"
+        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 dark:bg-blue-600/5 blur-[120px] rounded-full"
       />
       <motion.div
         animate={{
@@ -31,7 +31,7 @@ export const AnimatedBackground = () => {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-purple-600/20 blur-[150px] rounded-full"
+        className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-purple-600/10 dark:bg-purple-600/5 blur-[150px] rounded-full"
       />
     </div>
   );

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public.users (
   trial_start TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
   subscription_end TIMESTAMP WITH TIME ZONE,
   preferences JSONB DEFAULT '{"dark_mode": true, "email_alerts": true, "language": "en"}'::jsonb,
+  theme TEXT DEFAULT 'dark' CHECK (theme IN ('dark', 'light')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 

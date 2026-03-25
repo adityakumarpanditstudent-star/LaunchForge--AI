@@ -147,7 +147,7 @@ function LoginContent() {
     }
   };
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-black text-white transition-colors duration-300">
       <AnimatedBackground />
       <Navbar />
       
@@ -170,7 +170,7 @@ function LoginContent() {
                 </div>
                 <div className="space-y-4">
                   <h2 className="text-3xl font-bold">Check your email!</h2>
-                  <p className="text-gray-400">
+                  <p className="text-gray-500 dark:text-gray-400">
                     We've sent you a confirmation link to {formData.email}. Please verify your account to continue.
                   </p>
                 </div>
@@ -182,13 +182,13 @@ function LoginContent() {
                 </Button>
               </motion.div>
             ) : (
-              <GlassCard className="p-8 space-y-8">
+              <GlassCard className="p-8 space-y-8 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/5 shadow-2xl">
                 <div className="text-center space-y-2">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-blue-500/20">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-600 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-blue-500/20">
                     <Sparkles className="w-8 h-8 text-white" />
                   </div>
                   <h1 className="text-2xl font-bold">{isLogin ? "Welcome Back" : "Create Account"}</h1>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
                     {isLogin ? "Enter your credentials to access your dashboard." : "Join LaunchForge AI and start building today."}
                   </p>
                 </div>
@@ -211,12 +211,12 @@ function LoginContent() {
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email Address</label>
                       <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
                         <input 
                           required
                           type="email" 
                           placeholder="john@example.com"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                          className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
@@ -226,15 +226,15 @@ function LoginContent() {
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Password</label>
-                        {isLogin && <Link href="/forgot-password" title="Forgot Password" className="text-xs text-blue-400 hover:underline">Forgot password?</Link>}
+                        {isLogin && <Link href="/forgot-password" title="Forgot Password" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">Forgot password?</Link>}
                       </div>
                       <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
                         <input 
                           required
                           type="password" 
                           placeholder="••••••••"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                          className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                           value={formData.password}
                           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         />
@@ -245,17 +245,16 @@ function LoginContent() {
                       <motion.div 
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
                         className="space-y-2"
                       >
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Confirm Password</label>
                         <div className="relative">
-                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
                           <input 
                             required
                             type="password" 
                             placeholder="••••••••"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                            className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                             value={formData.confirmPassword}
                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                           />
@@ -264,45 +263,29 @@ function LoginContent() {
                     )}
                   </div>
 
-                  <Button variant="glow" className="w-full py-4 text-lg" disabled={isLoading}>
+                  <Button 
+                    disabled={isLoading}
+                    type="submit" 
+                    variant="glow"
+                    className="w-full h-14 text-lg rounded-xl shadow-xl shadow-blue-500/20"
+                  >
                     {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        {isLogin ? "Signing In..." : "Creating Account..."}
-                      </div>
+                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
-                      <>
-                        {isLogin ? "Sign In" : "Sign Up"} <ArrowRight className="w-5 h-5" />
-                      </>
+                      isLogin ? "Sign In" : "Create Account"
                     )}
                   </Button>
+
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setIsLogin(!isLogin)}
+                      className="text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
+                    >
+                      {isLogin ? "Don't have an account? Create one" : "Already have an account? Sign In"}
+                    </button>
+                  </div>
                 </form>
-
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/5" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-black/50 px-2 text-gray-500">Or continue with</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Chrome className="w-4 h-4" /> Google
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Github className="w-4 h-4" /> GitHub
-                  </Button>
-                </div>
-
-                <p className="text-center text-sm text-gray-400">
-                  {isLogin ? (
-                    <>Don't have an account? <button onClick={() => setIsLogin(false)} className="text-blue-400 hover:underline">Create account</button></>
-                  ) : (
-                    <>Already have an account? <button onClick={() => setIsLogin(true)} className="text-blue-400 hover:underline">Sign In</button></>
-                  )}
-                </p>
               </GlassCard>
             )}
           </AnimatePresence>

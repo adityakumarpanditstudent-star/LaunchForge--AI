@@ -89,7 +89,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-black text-white transition-colors duration-300">
       <AnimatedBackground />
       <Navbar />
       

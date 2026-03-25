@@ -51,7 +51,7 @@ function FullPreviewContent() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-black text-white">
       {/* Control Bar */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-black/50 backdrop-blur-xl border border-white/10 px-6 py-3 rounded-full shadow-2xl">
         <Button variant="outline" size="sm" onClick={() => router.push("/dashboard")} className="h-10">

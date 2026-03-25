@@ -133,7 +133,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen bg-black text-white transition-colors duration-300">
       <Sidebar />
       
       <main className="flex-1 p-8 overflow-y-auto">
@@ -221,11 +221,9 @@ export default function Profile() {
                           {user.email === 'adityafuture.ai.tech@gmail.com' ? 'Elite Account' : 'Subscription Status'}
                         </h3>
                       </div>
-                      {profile?.plan === 'starter' && user.email !== 'adityafuture.ai.tech@gmail.com' && (
-                        <Link href="/pricing">
-                          <Button variant="glow" className="h-14 px-8 text-lg rounded-2xl shadow-xl shadow-blue-500/20">Upgrade to Pro</Button>
-                        </Link>
-                      )}
+                      <Link href="/pricing">
+                        <Button variant="glow" className="h-14 px-8 text-lg rounded-2xl shadow-xl shadow-blue-500/20">Buy / Upgrade Plan</Button>
+                      </Link>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">

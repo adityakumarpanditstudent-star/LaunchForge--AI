@@ -58,7 +58,7 @@ export default function Templates() {
   });
 
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen bg-black text-white transition-colors duration-300">
       <Sidebar />
       
       <main className="flex-1 p-8 overflow-y-auto">
@@ -66,14 +66,14 @@ export default function Templates() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
             <div>
               <h1 className="text-4xl font-bold mb-2">Templates Library</h1>
-              <p className="text-gray-400">Choose a high-converting foundation and let AI customize it for you.</p>
+              <p className="text-gray-500 dark:text-gray-400">Choose a high-converting foundation and let AI customize it for you.</p>
             </div>
             <div className="relative w-full md:w-80">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input 
                 type="text" 
                 placeholder="Search templates..."
-                className="w-full bg-white/5 border border-white/10 rounded-full px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -88,7 +88,7 @@ export default function Templates() {
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${
                   activeCategory === cat 
                     ? "bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-600/20" 
-                    : "bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border-white/5"
+                    : "bg-white dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 border-gray-200 dark:border-white/5"
                 }`}
               >
                 {cat}
@@ -115,26 +115,26 @@ export default function Templates() {
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
                   className="group"
                 >
-                  <GlassCard className="p-0 overflow-hidden border-white/5 group-hover:border-blue-500/30 transition-all duration-500 group-hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
-                    <div className="relative aspect-[16/10] overflow-hidden bg-white/5">
+                  <GlassCard className="p-0 overflow-hidden border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-white/5 group-hover:border-blue-500/30 transition-all duration-500 group-hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-white/5">
                       {/* Mock Landing Page Preview */}
                       <div className="absolute inset-0 p-4 transform group-hover:scale-105 transition-transform duration-700">
-                        <div className="w-full h-full bg-black/40 rounded-xl border border-white/5 p-4 space-y-3 relative overflow-hidden">
+                        <div className="w-full h-full bg-white dark:bg-black/40 rounded-xl border border-gray-200 dark:border-white/5 p-4 space-y-3 relative overflow-hidden">
                           <div className="flex justify-between items-center opacity-40">
                             <div className="flex gap-1"><div className="w-2 h-2 rounded-full bg-red-500"/><div className="w-2 h-2 rounded-full bg-yellow-500"/><div className="w-2 h-2 rounded-full bg-green-500"/></div>
-                            <div className="w-12 h-2 bg-white/20 rounded"/>
+                            <div className="w-12 h-2 bg-gray-300 dark:bg-white/20 rounded"/>
                           </div>
                           <div className="space-y-2 pt-4">
-                            <div className="h-4 bg-white/20 rounded-md w-3/4" />
-                            <div className="h-2 bg-white/10 rounded-md w-full" />
-                            <div className="h-2 bg-white/10 rounded-md w-5/6" />
+                            <div className="h-4 bg-gray-200 dark:bg-white/20 rounded-md w-3/4" />
+                            <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-md w-full" />
+                            <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-md w-5/6" />
                           </div>
                           <div className="pt-4 grid grid-cols-3 gap-2">
-                            <div className="h-12 bg-white/5 rounded-lg border border-white/5" />
-                            <div className="h-12 bg-white/5 rounded-lg border border-white/5" />
-                            <div className="h-12 bg-white/5 rounded-lg border border-white/5" />
+                            <div className="h-12 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/5" />
+                            <div className="h-12 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/5" />
+                            <div className="h-12 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/5" />
                           </div>
-                          <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black/80 to-transparent" />
+                          <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-white dark:from-black/80 to-transparent" />
                         </div>
                       </div>
                       
@@ -167,11 +167,11 @@ export default function Templates() {
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="text-xl font-bold group-hover:text-blue-400 transition-colors">{template.name}</h3>
-                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-blue-600/10 transition-colors">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-blue-600/10 transition-colors">
                           <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-blue-400" />
                         </div>
                       </div>
-                      <p className="text-sm text-gray-500 line-clamp-1">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
                         Professional, high-converting layout for {template.category.toLowerCase()} brands.
                       </p>
                     </div>
