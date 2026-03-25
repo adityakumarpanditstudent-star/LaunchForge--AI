@@ -10,20 +10,25 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    
     if (!error) {
-      const isLocalEnv = process.env.NODE_ENV === 'development';
-      if (isLocalEnv) {
-        // we can be sure that origin is localhost in development
-        return NextResponse.redirect(`${origin}${next}`);
-      } else {
-        return NextResponse.redirect(`${origin}${next}`);
-      }
+      // Check if this was a password reset request
+      // Supabase doesn't always send the type in PKCE, 
+      // but we know it's a reset if 'next' was set to /reset-password
+      return NextResponse.redirect(`${origin}${next}`);
     } else {
       console.error('Auth callback error:', error.message);
-      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`);
+      // Redirect to login with error message and explicit login mode
+      return NextResponse.redirect(`${origin}/login?mode=login&error=${encodeURIComponent(error.message)}`);
     }
   }
 
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/login?error=Invalid authentication link`);
+  // If no code, check if there's an error in the URL from Supabase
+  const error_description = searchParams.get('error_description');
+  if (error_description) {
+    return NextResponse.redirect(`${origin}/login?mode=login&error=${encodeURIComponent(error_description)}`);
+  }
+
+  // Fallback for invalid links
+  return NextResponse.redirect(`${origin}/login?mode=login&error=Invalid or expired authentication link`);
 }
