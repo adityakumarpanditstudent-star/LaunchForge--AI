@@ -172,7 +172,7 @@ function LoginContent() {
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Password</label>
-                        {isLogin && <Link href="#" className="text-xs text-blue-400 hover:underline">Forgot password?</Link>}
+                        {isLogin && <Link href="/forgot-password" title="Forgot Password" className="text-xs text-blue-400 hover:underline">Forgot password?</Link>}
                       </div>
                       <div className="relative">
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
