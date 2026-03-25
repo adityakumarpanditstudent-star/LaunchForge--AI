@@ -57,11 +57,26 @@ function DashboardContent() {
       }
       setUser(user);
 
-      const { data: profile } = await supabase
+      let { data: profile, error: profileError } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
         .single();
+      
+      // If profile is missing (e.g. after manual data clear), recreate it
+      if (profileError || !profile) {
+        console.log("Profile missing, creating new record for existing Auth user...");
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert([{ id: user.id, email: user.email }])
+          .select()
+          .single();
+        
+        if (!createError) {
+          profile = newProfile;
+        }
+      }
+      
       setProfile(profile);
     };
     checkUser();

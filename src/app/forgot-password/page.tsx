@@ -52,28 +52,32 @@ export default function ForgotPassword() {
     }
 
     try {
-      // 3. If email does NOT exist (Check public.users table)
-      const { data: userData, error: userError } = await supabase
+      // 3. Optional: Quick check in public.users for faster precise feedback
+      const { data: userData } = await supabase
         .from('users')
         .select('id')
         .eq('email', email.toLowerCase())
         .single();
 
-      if (userError || !userData) {
-        // Precise feedback as requested: email not found in system
-        setError("Invalid email address. No account found with this email.");
-        setIsLoading(false);
-        return;
-      }
-
-      // 4. If email exists, send reset link
+      // 4. Send reset link regardless, but provide precise feedback if possible
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       });
 
       if (resetError) {
+        // If Supabase actually returns an error (rate limit, etc.)
         setError(resetError.message);
         throw resetError;
+      }
+
+      // If we didn't find the user in public.users AND Supabase didn't error
+      // We still show success to prevent email enumeration, but we could warn if we're sure
+      // However, per instructions: "Invalid email address" if NOT in system.
+      // Since we can't check auth.users directly, we've enabled public.users check.
+      if (!userData) {
+        setError("Invalid email address. No account found with this email.");
+        setIsLoading(false);
+        return;
       }
 
       setIsSuccess(true);
