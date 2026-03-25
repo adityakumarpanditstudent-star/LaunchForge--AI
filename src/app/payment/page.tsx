@@ -15,13 +15,14 @@ import {
   ShieldCheck,
   Loader2
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function PaymentContent() {
   const router = useRouter();
+  const supabase = createClient();
   const searchParams = useSearchParams();
   const planRequested = searchParams.get('plan') || 'pro';
   const billingCycle = (searchParams.get('billing') as "monthly" | "yearly") || 'monthly';
@@ -129,6 +130,8 @@ function PaymentContent() {
               
               <a 
                 href={upiLink}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="relative w-56 h-56 bg-zinc-900 p-4 rounded-3xl mb-8 overflow-hidden shadow-2xl flex items-center justify-center group cursor-pointer"
               >
                 {/* Dynamic QR Code Generator */}
@@ -138,7 +141,9 @@ function PaymentContent() {
                   className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <p className="text-white text-xs font-bold bg-blue-600 px-3 py-1 rounded-full">Open in App</p>
+                  <div className="text-white text-xs font-bold bg-blue-600 px-4 py-2 rounded-full shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                    Open in App
+                  </div>
                 </div>
               </a>
 

@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft, CheckCircle2, Star, Zap, Layout, MessageSquare, Download, Code } from "lucide-react";
 import { motion } from "framer-motion";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 
 interface TemplateContent {
@@ -17,6 +17,7 @@ interface TemplateContent {
 
 function PreviewContent() {
   const router = useRouter();
+  const supabase = createClient();
   const searchParams = useSearchParams();
   const templateId = searchParams.get('id');
   const [template, setTemplate] = useState<any>(null);

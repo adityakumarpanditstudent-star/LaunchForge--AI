@@ -14,7 +14,7 @@ import {
   Sparkles 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 const steps = [
   "Checking transaction",
@@ -25,6 +25,7 @@ const steps = [
 
 function ProcessingContent() {
   const router = useRouter();
+  const supabase = createClient();
   const searchParams = useSearchParams();
   const userId = searchParams.get('user_id');
   

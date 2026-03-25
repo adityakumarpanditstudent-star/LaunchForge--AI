@@ -14,13 +14,15 @@ import {
   Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const categories = ["All", "SaaS", "Startup", "E-commerce", "Personal Brand", "Agency", "App"];
 
 export default function Templates() {
   const router = useRouter();
+  const supabase = createClient();
   const [activeCategory, setActiveCategory] = useState("All");
   const [templates, setTemplates] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);

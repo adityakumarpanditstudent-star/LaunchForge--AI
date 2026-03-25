@@ -35,6 +35,16 @@ function LoginContent() {
   const [error, setError] = useState<string | null>(urlError);
 
   useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        router.push(redirectUrl);
+      }
+    };
+    checkUser();
+  }, [supabase.auth, router, redirectUrl]);
+
+  useEffect(() => {
     if (urlError) {
       setError(urlError);
     }
@@ -99,6 +109,7 @@ function LoginContent() {
           // Check if this is a "self-healing" case (e.g. dev user)
           if (formData.email === 'adityafuture.ai.tech@gmail.com') {
             router.push(redirectUrl);
+            router.refresh();
             return;
           }
           
@@ -109,6 +120,7 @@ function LoginContent() {
         }
 
         router.push(redirectUrl);
+        router.refresh();
       } else {
         // 1. Sign Up
         const { data, error: signupError } = await supabase.auth.signUp({

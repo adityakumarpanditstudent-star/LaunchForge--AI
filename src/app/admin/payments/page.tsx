@@ -15,7 +15,7 @@ import {
   Zap,
   Clock
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +33,7 @@ interface Payment {
 }
 
 export default function AdminPayments() {
+  const supabase = createClient();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
