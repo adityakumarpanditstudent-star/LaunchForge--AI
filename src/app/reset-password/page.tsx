@@ -27,16 +27,20 @@ export default function ResetPassword() {
 
   useEffect(() => {
     const checkSession = async () => {
-      // Give the client a moment to initialize the session from cookies
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        // Try one more time after a short delay
-        setTimeout(async () => {
-          const { data: { session: retrySession } } = await supabase.auth.getSession();
-          if (!retrySession) {
-            setError("Session not found. Please ensure you clicked the link in your email.");
+        // In some cases, the session might take a moment to be established from the cookie set by the callback
+        const retry = async (count: number) => {
+          if (count > 3) {
+            setError("Authentication session not found. Please try requesting a new reset link.");
+            return;
           }
-        }, 1000);
+          await new Promise(resolve => setTimeout(resolve, 500));
+          const { data: { session: s } } = await supabase.auth.getSession();
+          if (s) return;
+          await retry(count + 1);
+        };
+        await retry(0);
       }
     };
     checkSession();

@@ -25,12 +25,19 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/dashboard';
+  const urlError = searchParams.get('error');
   
   const supabase = createClient();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(urlError);
+
+  useEffect(() => {
+    if (urlError) {
+      setError(urlError);
+    }
+  }, [urlError]);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
