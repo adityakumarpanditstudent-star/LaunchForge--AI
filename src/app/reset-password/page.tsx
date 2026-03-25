@@ -26,12 +26,17 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Supabase reset password link will provide a session automatically
-    // when clicking the link, as long as it redirects back to a page in our app.
     const checkSession = async () => {
+      // Give the client a moment to initialize the session from cookies
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setError("Invalid or expired session. Please request a new password reset link.");
+        // Try one more time after a short delay
+        setTimeout(async () => {
+          const { data: { session: retrySession } } = await supabase.auth.getSession();
+          if (!retrySession) {
+            setError("Session not found. Please ensure you clicked the link in your email.");
+          }
+        }, 1000);
       }
     };
     checkSession();

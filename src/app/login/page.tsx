@@ -64,6 +64,9 @@ function LoginContent() {
         const { data, error: signupError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
         });
         
         if (signupError) {
