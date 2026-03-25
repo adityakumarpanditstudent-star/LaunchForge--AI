@@ -60,7 +60,8 @@ export default function ForgotPassword() {
         .single();
 
       if (userError || !userData) {
-        setError("Invalid email address");
+        // Precise feedback as requested: email not found in system
+        setError("Invalid email address. No account found with this email.");
         setIsLoading(false);
         return;
       }

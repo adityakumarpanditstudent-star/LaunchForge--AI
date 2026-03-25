@@ -11,9 +11,15 @@ CREATE TABLE IF NOT EXISTS public.users (
 -- Enable RLS on users table
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
--- User Policies
+-- Profile Policies
 CREATE POLICY "Users can view their own profile" ON public.users
   FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Allow public email existence check" ON public.users
+  FOR SELECT USING (true);
+
+CREATE POLICY "Users can update their own profile" ON public.users
+  FOR UPDATE USING (auth.uid() = id);
 
 -- Payments table
 CREATE TABLE IF NOT EXISTS public.payments (
